@@ -9,7 +9,7 @@ val alphabet = setOf("Alfa", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Go
  * A mapping for english characters to phonetic alphabet.
  * [ a -> Alfa, b -> Bravo, ...]
  */
-val association: Map<Char, String> = TODO()
+val association: Map<Char, String> = alphabet.associateBy { it[0].toLowerCase() }
 
 /**
  * Extension function for String which encode it according to `association` mapping
@@ -20,13 +20,13 @@ val association: Map<Char, String> = TODO()
  * "abc".encode() == "AlfaBravoCharlie"
  *
  */
-fun String.encode(): String = TODO()
+fun String.encode(): String = map { it.toLowerCase() }. map { association[it] ?: it }.joinToString("")
 
 /**
  * A reversed mapping for association
  * [ alpha -> a, bravo -> b, ...]
  */
-val reversedAssociation: Map<String, Char> = TODO()
+val reversedAssociation: Map<String, Char> = hashMapOf(*alphabet.map(transform = { it -> Pair(it, it[0].toLowerCase()) }).toTypedArray())
 
 /**
  * Extension function for String which decode it according to `reversedAssociation` mapping
@@ -34,8 +34,25 @@ val reversedAssociation: Map<String, Char> = TODO()
  * @return encoded string or null if it is impossible to decode
  *
  * Example:
- * "alphabravocharlie".decode() == "abc"
+ * "alphabravocharlie".encode() == "abc"
  * "charliee".decode() == null
  *
  */
-fun String.decode(): String? = TODO()
+fun String.decode(): String? {
+    if (this.isEmpty()) return ""
+    val fstChar = this[0]
+    when (fstChar) {
+        in '0'..'9', ' ' -> {
+            val tail = this.substring(1).decode()
+            tail ?: return null
+            return fstChar + tail
+        }
+    }
+    val lowerStr = this.toLowerCase().capitalize()
+    val matches = reversedAssociation.keys.asSequence().map { Pair(lowerStr.indexOf(it), it) }.filter { it.first == 0 }
+    val result = matches.firstOrNull()
+    result ?: return null
+    val tail = lowerStr.substring(result.second.length).decode()
+    tail ?: return null
+    return reversedAssociation[result.second]!! + tail
+}

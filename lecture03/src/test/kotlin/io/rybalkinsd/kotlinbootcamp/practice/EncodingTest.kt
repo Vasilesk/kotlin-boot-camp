@@ -43,9 +43,10 @@ class EncodingTest {
         assertEquals("abc", "AlfaBravoCharlie".decode())
     }
 
+//    ??? the same input as for previous Test, but output is another one. Test was changed
     @Test
     fun `decode # Abc`() {
-        assertEquals("Abc", "AlfaBravoCharlie".decode())
+        assertEquals("abc", "alfaBravoCharlie".decode())
     }
 
     @Test
