@@ -13,9 +13,9 @@ typealias Client = ChatClient
 class ChatClientTest {
     companion object {
         // Change this to your Last name
-        private const val MY_NAME_IN_CHAT = "I_DID_NOT_CHANGE_DEFAULT_NAME"
+        private const val MY_NAME_IN_CHAT = "Vasya"
         // Change this to any non-swear text
-        private const val MY_MESSAGE_TO_CHAT = "SOMEONE_KILL_ME"
+        private const val MY_MESSAGE_TO_CHAT = "lol"
         private val log = logger()
     }
 
@@ -27,7 +27,10 @@ class ChatClientTest {
 
     @Test
     fun viewHistory() {
-        val response = Client.viewHistory().also { println(it) }
+        val response = Client.viewHistory().also {
+            println(it.body()!!.string())
+            println(it.headers()["cookie"])
+        }
         assertEquals(200, response.code())
     }
 
@@ -45,8 +48,10 @@ class ChatClientTest {
 
     @Test
     fun logout() {
-        val response = Client.logout(MY_NAME_IN_CHAT)
-        println(response)
-        assertTrue(response.code() == 200 || response.code() == 400)
+        Client.logout(MY_NAME_IN_CHAT).use {
+            println(it.body()!!.string())
+            println(it.headers()["cookies"])
+            assertTrue(it.code() == 200 || it.code() == 400)
+        }
     }
 }

@@ -5,6 +5,7 @@ group = "io.rybalkinsd"
 version = "1.0-SNAPSHOT"
 
 plugins {
+    `maven-publish`
     val ktVersion = "1.2.71"
     kotlin("jvm") version ktVersion
 
@@ -31,6 +32,8 @@ dependencies {
     compile("io.github.rybalkinsd", "kohttp", "0.3.1")
     compile("org.slf4j", "slf4j-api", "1.7.25")
 
+    implementation( "com.beust:klaxon:3.0.1")
+
     compile(spring("web"))
     compile(spring("actuator"))
 
@@ -53,6 +56,20 @@ tasks {
         dependsOn(ktlint)
     }
 }
+
+//// for one jar output
+//publishing {
+//    publications {
+//        create("default", MavenPublication::class.java) {
+//            from(components["java"])
+//        }
+//    }
+//    repositories {
+//        maven {
+//            url = uri("$buildDir/repository")
+//        }
+//    }
+//}
 
 fun DependencyHandler.spring(module: String, version: String? = null) =
     "org.springframework.boot:spring-boot-starter-$module${version?.let { ":$version" } ?: ""}"
